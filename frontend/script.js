@@ -100,7 +100,10 @@ async function fazerLogin() {
     }
 }
 
-const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
+// Servidores ICE (STUN/TURN). Começa com um padrão e é substituído pelos
+// que o backend informa em /config (inclui TURN, essencial pra celulares
+// em redes diferentes).
+let ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 // Trechos maiores cortam menos palavras no meio e dão mais contexto ao
 // modelo — melhora a fluência da transcrição (custo: texto aparece com
 // um pouco mais de atraso no painel).
@@ -152,6 +155,9 @@ async function aplicarMarca() {
         }
         if (cfg.subtitulo) {
             document.getElementById("subtitulo-clinica").textContent = cfg.subtitulo;
+        }
+        if (Array.isArray(cfg.ice_servers) && cfg.ice_servers.length) {
+            ICE_SERVERS = cfg.ice_servers;
         }
     } catch (e) {
         // sem backend, fica o nome padrão

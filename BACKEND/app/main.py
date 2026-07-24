@@ -127,6 +127,49 @@ TELEFONE = os.getenv("TELEFONE", "")
 SUBTITULO_PADRAO = "Assistente Inteligente para Consultas Veterinárias"
 
 # ---------------------------------------------------------------------------
+# Servidores ICE (STUN/TURN) para a videochamada.
+#
+# STUN sozinho não basta quando os dois lados estão em redes diferentes
+# (ex.: dois celulares no 4G) — aí precisa de um TURN, que faz a ponte.
+# Por padrão usamos um TURN público gratuito (Open Relay) para funcionar
+# de imediato. Para mais estabilidade, crie uma conta grátis (ex.:
+# metered.ca, 50GB/mês) e informe TURN_URL / TURN_USER / TURN_PASS nas
+# variáveis de ambiente — elas entram automaticamente.
+# ---------------------------------------------------------------------------
+def _montar_ice_servers():
+    servers = [
+        {"urls": "stun:stun.l.google.com:19302"},
+        # TURN público gratuito (Open Relay) — bom para testes.
+        {
+            "urls": "turn:openrelay.metered.ca:80",
+            "username": "openrelayproject",
+            "credential": "openrelayproject",
+        },
+        {
+            "urls": "turn:openrelay.metered.ca:443",
+            "username": "openrelayproject",
+            "credential": "openrelayproject",
+        },
+        {
+            "urls": "turn:openrelay.metered.ca:443?transport=tcp",
+            "username": "openrelayproject",
+            "credential": "openrelayproject",
+        },
+    ]
+    # TURN próprio (opcional), via variáveis de ambiente:
+    turn_url = os.getenv("TURN_URL", "").strip()
+    if turn_url:
+        servers.append({
+            "urls": turn_url,
+            "username": os.getenv("TURN_USER", ""),
+            "credential": os.getenv("TURN_PASS", ""),
+        })
+    return servers
+
+
+ICE_SERVERS = _montar_ice_servers()
+
+# ---------------------------------------------------------------------------
 # Senha do veterinário (necessária quando hospedado na nuvem, endereço
 # público). Se VET_SENHA estiver vazia (uso local no notebook), o acesso
 # fica aberto e nada muda. Quando definida, os endpoints que gastam a
@@ -155,6 +198,7 @@ class ConfigResponse(BaseModel):
     telefone: str
     subtitulo: str
     auth_required: bool
+    ice_servers: list = []
 
 
 @app.get("/auth/verificar")
@@ -208,6 +252,7 @@ def obter_config():
         telefone=TELEFONE,
         subtitulo=subtitulo,
         auth_required=bool(VET_SENHA),
+        ice_servers=ICE_SERVERS,
     )
 
 

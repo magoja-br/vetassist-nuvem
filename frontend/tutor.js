@@ -9,7 +9,8 @@ const BACKEND_HTTP =
         ? window.location.origin
         : "http://127.0.0.1:8000";
 const BACKEND_WS = BACKEND_HTTP.replace(/^http/, "ws");
-const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
+// STUN/TURN — substituído pelos servidores que o backend informa em /config.
+let ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
 
 // Personaliza a tela com o nome da clínica/veterinário (do .env do
 // backend) e sauda o tutor/animal desta consulta pelo nome.
@@ -26,6 +27,9 @@ const ICE_SERVERS = [{ urls: "stun:stun.l.google.com:19302" }];
             let sub = `Sala de atendimento do Dr. ${cfg.nome_veterinario}`;
             if (cfg.crmv) sub += ` — ${cfg.crmv}`;
             document.getElementById("subtitulo-clinica").textContent = sub;
+        }
+        if (Array.isArray(cfg.ice_servers) && cfg.ice_servers.length) {
+            ICE_SERVERS = cfg.ice_servers;
         }
     } catch (e) {
         // sem backend, fica o nome padrão
