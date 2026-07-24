@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetAssist AI — Sala do Tutor</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, Helvetica, sans-serif;
+            background:#f2f4f8;
+        }
+
+        header{
+            background:#1976d2;
+            color:white;
+            padding:20px;
+            text-align:center;
+        }
+
+        .container{
+            max-width:700px;
+            margin:20px auto;
+            padding:0 20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:10px;
+            padding:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1);
+        }
+
+        .video{
+            position:relative;
+            height:400px;
+            background:#222;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:18px;
+            color:#ccc;
+            border-radius:6px;
+            overflow:hidden;
+        }
+
+        .video video{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        #local-video{
+            position:absolute;
+            width:120px;
+            height:90px;
+            right:12px;
+            bottom:12px;
+            border:2px solid white;
+            border-radius:6px;
+            object-fit:cover;
+            background:#000;
+        }
+
+        #video-placeholder{
+            position:absolute;
+        }
+
+        button{
+            margin-top:20px;
+            padding:12px 20px;
+            background:#1976d2;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            font-size:15px;
+        }
+
+        button:hover{
+            background:#125ea8;
+        }
+
+        button:disabled{
+            background:#9fb8cc;
+            cursor:not-allowed;
+        }
+
+        #status-msg{
+            margin-top:14px;
+            font-size:14px;
+            color:#444;
+        }
+
+        @media (max-width: 760px){
+            header{ padding:14px 12px; }
+            header h1{ font-size:20px; margin:0 0 4px; }
+            header p{ font-size:13px; margin:0; }
+            .container{ margin:12px auto; padding:0 12px; }
+            .video{ height:52vh; min-height:280px; }
+            #local-video{ width:96px; height:74px; }
+            button{ width:100%; padding:14px; font-size:16px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1 id="titulo-clinica">VetAssist AI</h1>
+    <p><span id="subtitulo-clinica">Sala de atendimento</span> — entre com câmera e microfone</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <div class="video">
+            <span id="video-placeholder">Clique em "Entrar na Consulta" para começar</span>
+            <video id="remote-video" autoplay playsinline></video>
+            <video id="local-video" autoplay playsinline muted></video>
+        </div>
+
+        <button id="btn-entrar">Entrar na Consulta</button>
+
+        <div id="status-msg"></div>
+    </div>
+
+</div>
+
+<script src="tutor.js"></script>
+
+</body>
+</html>

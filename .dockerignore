@@ -1,0 +1,9 @@
+**/.venv
+**/__pycache__
+**/*.pyc
+BACKEND/dist
+BACKEND/build
+BACKEND/prontuarios
+**/.env
+*.spec
+VetAssist_Dr

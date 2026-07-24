@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetAssist AI</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, Helvetica, sans-serif;
+            background:#f2f4f8;
+        }
+
+        #login-overlay{
+            position:fixed;
+            inset:0;
+            background:#1976d2;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:1000;
+            padding:20px;
+        }
+
+        #login-box{
+            background:white;
+            border-radius:12px;
+            padding:28px 24px;
+            width:100%;
+            max-width:340px;
+            text-align:center;
+            box-shadow:0 8px 30px rgba(0,0,0,.25);
+        }
+
+        #login-box h2{ margin:0 0 4px; color:#1976d2; }
+        #login-box p{ margin:0 0 18px; color:#666; font-size:14px; }
+
+        #login-senha{
+            width:100%;
+            box-sizing:border-box;
+            padding:14px;
+            font-size:16px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            margin-bottom:12px;
+        }
+
+        #login-btn{
+            width:100%;
+            margin:0;
+            padding:14px;
+            font-size:16px;
+            background:#1976d2;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        #login-erro{ color:#c62828; font-size:13px; margin-top:10px; min-height:18px; }
+
+        header{
+            background:#1976d2;
+            color:white;
+            padding:20px;
+            text-align:center;
+        }
+
+        .container{
+            display:grid;
+            grid-template-columns:2fr 1fr;
+            gap:20px;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:10px;
+            padding:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,.1);
+        }
+
+        .video{
+            position:relative;
+            height:450px;
+            background:#222;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            color:#ccc;
+            border-radius:6px;
+            overflow:hidden;
+        }
+
+        .video video{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        #remote-video{
+            background:#222;
+        }
+
+        #local-video{
+            position:absolute;
+            width:130px;
+            height:100px;
+            right:12px;
+            bottom:12px;
+            border:2px solid white;
+            border-radius:6px;
+            object-fit:cover;
+            background:#000;
+        }
+
+        #video-placeholder{
+            position:absolute;
+        }
+
+        #link-tutor{
+            margin-top:14px;
+            padding:12px;
+            background:#eef4fb;
+            border-radius:6px;
+            font-size:13px;
+            display:none;
+        }
+
+        #link-tutor input{
+            width:70%;
+            padding:6px;
+            font-size:13px;
+        }
+
+        #link-tutor button{
+            margin:0 0 0 8px;
+            padding:6px 12px;
+            font-size:13px;
+            vertical-align:middle;
+        }
+
+        .painel{
+            height:180px;
+            overflow:auto;
+        }
+
+        #painel-ia{
+            height:260px;
+        }
+
+        #painel-ia button{
+            margin-top:10px;
+            padding:8px 14px;
+            font-size:13px;
+        }
+
+        #sugestoes-resultado{
+            margin-top:10px;
+            font-size:13px;
+        }
+
+        #sugestoes-resultado ul{
+            margin:4px 0 10px 18px;
+            padding:0;
+        }
+
+        #sugestoes-resultado li{
+            margin-bottom:4px;
+        }
+
+        #painel-prontuario{
+            height:auto;
+            max-height:420px;
+        }
+
+        #painel-prontuario button{
+            margin-top:10px;
+            padding:8px 14px;
+            font-size:13px;
+        }
+
+        #prontuario-texto,
+        #anotacoes-consulta{
+            width:100%;
+            box-sizing:border-box;
+            margin-top:10px;
+            font-family:inherit;
+            font-size:13px;
+            padding:8px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            resize:vertical;
+        }
+
+        #prontuario-aviso{
+            font-size:11px;
+            color:#888;
+            margin:6px 0 0;
+        }
+
+        #prontuario-status{
+            margin-left:10px;
+            font-size:12px;
+            color:#2e7d32;
+        }
+
+        #painel-historico{
+            max-height:500px;
+            overflow:auto;
+        }
+
+        #busca-historico{
+            width:100%;
+            box-sizing:border-box;
+            padding:8px;
+            margin-top:6px;
+            font-size:13px;
+            border:1px solid #ccc;
+            border-radius:6px;
+        }
+
+        #lista-historico{
+            margin-top:10px;
+            font-size:13px;
+        }
+
+        .item-historico{
+            padding:8px 10px;
+            border-radius:6px;
+            cursor:pointer;
+            border-bottom:1px solid #eee;
+        }
+
+        .item-historico:hover{
+            background:#eef4fb;
+        }
+
+        #texto-historico{
+            white-space:pre-wrap;
+            font-family:inherit;
+            font-size:13px;
+            background:#f7f9fc;
+            border:1px solid #e0e6ee;
+            border-radius:6px;
+            padding:10px;
+            max-height:260px;
+            overflow:auto;
+        }
+
+        #painel-historico button{
+            margin-top:6px;
+            padding:8px 14px;
+            font-size:13px;
+        }
+
+        button{
+            margin-top:20px;
+            padding:12px 20px;
+            background:#1976d2;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#125ea8;
+        }
+
+        button:disabled{
+            background:#9fb8cc;
+            cursor:not-allowed;
+        }
+
+        #status-badge{
+            display:inline-block;
+            margin-left:12px;
+            padding:4px 10px;
+            border-radius:12px;
+            font-size:13px;
+            vertical-align:middle;
+        }
+
+        #status-badge.online{
+            background:#2e7d32;
+            color:white;
+        }
+
+        #status-badge.offline{
+            background:#c62828;
+            color:white;
+        }
+
+        #status-badge.checking{
+            background:#999;
+            color:white;
+        }
+
+        #consulta-info{
+            margin-top:10px;
+            font-size:14px;
+            color:#444;
+        }
+
+        #dados-consulta{
+            margin-bottom:12px;
+        }
+
+        #dados-consulta input{
+            padding:10px;
+            font-size:14px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            margin-right:8px;
+            width:220px;
+        }
+
+        /* ---- Celular: empilha tudo em uma coluna e aumenta os toques ---- */
+        @media (max-width: 760px){
+            header{ padding:14px 12px; }
+            header h1{ font-size:20px; margin:0 0 4px; }
+            header p{ font-size:13px; margin:0; }
+
+            .container{
+                grid-template-columns:1fr;   /* uma coluna só */
+                gap:14px;
+                padding:12px;
+            }
+
+            .video{ height:40vh; min-height:240px; }
+            #local-video{ width:96px; height:74px; }
+
+            .painel{ height:auto; max-height:none; }
+            #painel-ia{ height:auto; }
+            #painel-prontuario{ max-height:none; }
+            #painel-historico{ max-height:none; }
+
+            /* Campos e botões maiores, ocupando a largura toda */
+            #dados-consulta input,
+            #busca-historico,
+            #prontuario-texto,
+            #anotacoes-consulta,
+            #link-tutor input{
+                width:100%;
+                box-sizing:border-box;
+                margin:6px 0 0;
+                font-size:16px;      /* 16px evita zoom automático no iOS */
+            }
+            button{ width:100%; margin-top:10px; padding:14px; font-size:15px; }
+            #link-tutor button,
+            #painel-ia button,
+            #painel-prontuario button,
+            #painel-historico button{ width:100%; }
+            #btn-copiar-link{ margin:8px 0 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="login-overlay" style="display:none;">
+    <div id="login-box">
+        <h2 id="login-titulo">VetAssist AI</h2>
+        <p>Acesso do veterinário</p>
+        <input id="login-senha" type="password" placeholder="Senha" autocomplete="current-password">
+        <button id="login-btn">Entrar</button>
+        <div id="login-erro"></div>
+    </div>
+</div>
+
+<header>
+    <h1 id="titulo-clinica">VetAssist AI</h1>
+    <p><span id="subtitulo-clinica">Assistente Inteligente para Consultas Veterinárias</span>
+        <span id="status-badge" class="checking">verificando backend...</span>
+    </p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Consulta por Vídeo</h2>
+
+        <div id="dados-consulta">
+            <input id="input-tutor" type="text" placeholder="Nome do tutor (ex: João)">
+            <input id="input-animal" type="text" placeholder="Nome do animal (ex: Rex)">
+        </div>
+
+        <div class="video">
+            <span id="video-placeholder">Área da Videochamada</span>
+            <video id="remote-video" autoplay playsinline></video>
+            <video id="local-video" autoplay playsinline muted></video>
+        </div>
+
+        <button id="btn-iniciar">
+            Iniciar Consulta
+        </button>
+
+        <div id="consulta-info"></div>
+
+        <div id="link-tutor">
+            Envie este link para o tutor entrar na consulta:<br>
+            <input id="link-tutor-input" type="text" readonly>
+            <button id="btn-copiar-link">Copiar</button>
+        </div>
+
+    </div>
+
+    <div>
+
+        <div class="card painel" id="painel-transcricao">
+            <h3>Transcrição</h3>
+
+            <p>A transcrição aparecerá aqui.</p>
+        </div>
+
+        <br>
+
+        <div class="card painel" id="painel-ia">
+            <h3>Assistente IA</h3>
+
+            <p>Sugestões clínicas aparecerão aqui.</p>
+
+            <button id="btn-sugestoes" disabled>Gerar Sugestões</button>
+
+            <div id="sugestoes-resultado"></div>
+        </div>
+
+        <br>
+
+        <div class="card painel" id="painel-prontuario">
+            <h3>Prontuário</h3>
+
+            <textarea id="anotacoes-consulta" rows="3"
+                placeholder="Anotações durante a consulta (opcional): doses, orientações, lembretes... Entram no prontuário ao encerrar."></textarea>
+
+            <p>Ao encerrar a consulta, um rascunho do prontuário é gerado
+               aqui para você revisar e salvar.</p>
+
+            <button id="btn-encerrar" disabled>Encerrar Consulta e Gerar Prontuário</button>
+
+            <div id="prontuario-area" style="display:none;">
+                <textarea id="prontuario-texto" rows="10"></textarea>
+                <p id="prontuario-aviso"></p>
+                <button id="btn-salvar-prontuario">Salvar Prontuário</button>
+                <button id="btn-whatsapp-prontuario" title="Abre o WhatsApp com o texto pronto para enviar ao tutor">Enviar por WhatsApp</button>
+                <span id="prontuario-status"></span>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card" id="painel-historico">
+            <h3>Consultas Anteriores</h3>
+
+            <input id="busca-historico" type="text"
+                   placeholder="Buscar por nome do animal ou tutor...">
+
+            <div id="lista-historico"><p>Carregando...</p></div>
+
+            <div id="visualizacao-historico" style="display:none;">
+                <pre id="texto-historico"></pre>
+                <button id="btn-copiar-historico">Copiar</button>
+                <button id="btn-whatsapp-historico" title="Abre o WhatsApp com o texto pronto para enviar ao tutor">Enviar por WhatsApp</button>
+                <button id="btn-fechar-historico">Fechar</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

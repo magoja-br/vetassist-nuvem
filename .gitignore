@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Ambiente / segredos
+.env
+.env.*
+!.env.example
+
+# Dados de pacientes — nunca versionar
+BACKEND/prontuarios/
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
